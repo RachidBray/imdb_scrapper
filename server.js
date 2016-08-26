@@ -1,67 +1,52 @@
 var express = require('express');
-var fs = require('fs');
 var request = require('request');
+var fs = require('fs');
 var cheerio = require('cheerio');
 var app = express();
 
+app.get('/scrape', function (req, res) {
 
-app.get('/scrape', function(req, res){
+    url = 'http://www.imdb.com/title/tt1663202/';
 
-	// First the url from where we'll scrape the data
-	url = 'www.imdb.com/title/tt1663202/';
+    request(url, function (error, response, html) {
 
-	// The structure of the request url comes here
-	// The first parameter is our url
-	// The callback function takes three parameter, an error, response status code, and the html
+        if (!error) {
 
-	request(url, function(error, response, html){
+            var $ = cheerio.load(html);
 
-		// First we'll make sure no error occured while making the request
+            var title, year, rating;
+            var json = {
+                title   :   "",
+                release :   "",
+                rating  :   ""
+            };
 
-		if (!error) {
+            $('.title_wrapper').filter(function () {
+                var data = $(this);
+                title = data.children().first().text();
+                json.title = title;
 
-			// Now we'll use cheerio library which is the jQuery of the server
+                release = data.children().first().children().first().text();
+                json.release = release;
+            });
 
-			var $ = cheerio.load(html);
+            $('.ratingValue').filter(function () {
+                var data = $(this);
+                rating = data.children().first().text();
+                json.rating = rating;
+            });
 
-			// Finally we'll define the variables we're going to capture
+            fs.writeFile('output.json', JSON.stringify(json, null, 4), function (err) {
+                console.log("data scrapped from the website! Check for the output.json file!");
+            });
 
-			var title, release, rating;
-			var json = {title : "", release : "", rating : ""};
+        }
 
+        res.send("Check you're console!");
 
-			$('.title_wrapper').filter(function(){
-				var data = $(this);
-				title = data.children().first().text();
-				release = data.children().first().children().first().text();
+    })
+});
 
-				json.title = title;
-				json.release = release;
-			})
-
-			$('.ratingValue').filter(function(){
-				var data = $(this);
-				rating = data.children().first().children().first().children();
-
-				json.rating = rating;
-			})
-
-
-			fs.writeFile('output.json', JSON.stringify(json, null , 4), function(err){
-				console.log("check you're project directory for output.json file.");
-			})
-
-		}
-
-	})
-
-	res.send("Check you're console")
-
-
-
-})
-
-
-app.listen('8081');
-console.log('Magic happens at port 8081');
+app.listen(8081);
+console.log("Open Browser and visit http://localhost:8081/scrape");
 exports = module.exports = app;
