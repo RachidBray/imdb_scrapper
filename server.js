@@ -33,6 +33,24 @@ app.get('/scrape', function(req, res){
 				rating = ""
 			};
 
+
+			$('.title_wrapper').filter(function(){
+				var data = $(this);
+				title = data.children().first().text();
+				release = data.children().first().children().first().text();
+
+				json.title = title;
+				json.release = release;
+			})
+
+			$('.ratingValue').filter(function(){
+				var data = $(this);
+				rating = data.children().first().children().first().children();
+
+				json.rating = rating;
+			})
+
+
 		}
 
 	})
