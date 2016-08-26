@@ -27,11 +27,7 @@ app.get('/scrape', function(req, res){
 			// Finally we'll define the variables we're going to capture
 
 			var title, release, rating;
-			var json = {
-				title = "",
-				release = "",
-				rating = ""
-			};
+			var json = {title : "", release : "", rating : ""};
 
 
 			$('.title_wrapper').filter(function(){
@@ -51,9 +47,17 @@ app.get('/scrape', function(req, res){
 			})
 
 
+			fs.writeFile('output.json', JSON.stringify(json, null , 4), function(err){
+				console.log("check you're project directory for output.json file.");
+			})
+
 		}
 
 	})
+
+	res.send("Check you're console")
+
+
 
 })
 
