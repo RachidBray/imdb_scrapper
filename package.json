@@ -1,0 +1,12 @@
+{
+	"name"			: "imdb_scrapper",
+	"version"		: "0.0.1",
+	"description"	: "Scraping the imdb website",
+	"main"			: "server.js",
+	"author"		: "an0nh4x0r",
+	"dependencies"	: {
+		"express"	: "latest",
+		"request"	: "latest",
+		"cheerio"	: "latest"
+	}	
+}
